@@ -104,6 +104,7 @@ const Rate = ({id}:any) => {
 
     const postData = async () => {
         console.log(getDepartment, id, score, advice)
+        if ( getDepartment === "เลือกแแผนก" ) return false
         const res = await fetch("/api/sendData", {
             method: "POST", // *GET, POST, PUT, DELETE, etc.
             mode: "cors", // no-cors, *cors, same-origin
@@ -148,7 +149,7 @@ const Rate = ({id}:any) => {
     const swalError = () => {
         
         Swal.fire({
-            title: 'Unexpected Error!',
+            title: 'ไม่สำเร็จ',
             icon: "error",
         })
 
