@@ -3,7 +3,7 @@ import type { ModalOptions, ModalInterface } from 'flowbite'
 import { NextRouter, useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-const StatModal = ({id}: any) => {
+const StatModal = ({id, key}: any) => {
     const router: NextRouter = useRouter()
 
     const [department, setDepartment] = useState([

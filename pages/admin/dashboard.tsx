@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import StatModal from "@/components/modal"
 // import { useExcelDownloder } from "react-xls"
 
-const adminDashboard = () => {
+const AdminDashboard = () => {
 
     const Data = {
         Data1: [
