@@ -5,9 +5,34 @@ import Swal from 'sweetalert2'
 import queryString from 'query-string';
 import lineApi from 'line-api'
 
+interface checkboxState {
+    "first-col-1-alt":boolean
+    "sec-col-1-alt":boolean
+    "th-col-1-alt":boolean
+    "four-col-1-alt":boolean
+    "five-col-1-alt":boolean
+    "first-col-2-alt":boolean
+    "sec-col-2-alt":boolean
+    "th-col-2-alt":boolean
+    "four-col-2-alt":boolean
+    "five-col-2-alt":boolean
+}
+
 const Rate = ({id}:any) => {
     const router: NextRouter = useRouter()
     const [score, setScore] = useState<number>(0)
+    const [stateScore, setStateScore] = useState({
+        "first-col-1-alt":true,
+        "sec-col-1-alt":true,
+        "th-col-1-alt":true,
+        "four-col-1-alt":true,
+        "five-col-1-alt":true,
+        "first-col-2-alt":true,
+        "sec-col-2-alt":true,
+        "th-col-2-alt":true,
+        "four-col-2-alt":true,
+        "five-col-2-alt":true
+    })
     const [getDepartment, setGetDepartment] = useState<string>("เลือกแผนก")
     const [advice, setAdvice] = useState<string>("")
     const [department, setDepartment] = useState([
@@ -67,8 +92,14 @@ const Rate = ({id}:any) => {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, checked } = e.target
-        if (checked) return setScore( score + parseInt(value) )
-        setScore( score - parseInt(value) )
+        var val:number = parseInt(value)
+        if (name.includes("-alt")) {
+            setStateScore((prev) => ({...prev, [name]: checked}))
+        } else {
+            setStateScore((prev) => ({...prev, [name+"-alt"]: !checked}))
+        }
+        if (!checked && name.includes("-alt") || checked && !name.includes("-alt")) return setScore( score + val )
+        setScore( score - val )
     }
 
     const postData = async () => {
@@ -90,10 +121,6 @@ const Rate = ({id}:any) => {
 
     const postLine = async () => {
         const url = '/api/sendLinehandler';
-        const token = 'AN7ICSRiSvVMuSZlI9BCF9IHU6RPyqPEhzYAoBltG8C';
-        const msg = `message=\n${getDepartment} ได้ประเมิน${id}แล้ว คะแนน%${score}`;
-        const data = "message=%22HEllo%22";
-        //const { department, sendDepartment, score } = req.body
         const response = await fetch(url, {
             mode: "cors",
             method: 'POST',
@@ -129,7 +156,6 @@ const Rate = ({id}:any) => {
     }
 
     const onSubmit = async () => {
-
         Swal.fire({
             title: 'ต้องการส่งคำตอบไหม?',
             text: "ไม่สามารถส่งอีกครั้งได้แล้วนะ!",
@@ -175,7 +201,7 @@ const Rate = ({id}:any) => {
                                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                             <tr>
-                                                <th scope="col" className="px-6 py-3" >1. ภาพลักษณ์ที่ดีกับหน่วยงานภายในโรงพยาบาลตามหัวข้อ Saint’s Mary Model ( 10% )</th>
+                                                <th scope="col" className="px-6 py-3" >1. การปฏิบัติตามหลักยิ้มรับ ( 2 คะแนน )</th>
                                                 <th scope="col" className="px-6 py-3" >ประเมิน</th>              
                                             </tr>
                                         </thead>
@@ -184,8 +210,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >สีหน้ายิ้มแย้มอยู่เสมอเมื่อพบผู้รับบริการ ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange}  id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['first-col-1-alt']} onChange={handleChange} name='first-col-1' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="first-col-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['first-col-1-alt']} onChange={handleChange} name='first-col-1-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="first-col-1-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -193,8 +221,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >สีหน้ายิ้มแย้มอยู่เสมอเมื่อพบพนักงานภายนอกแผนก ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['first-col-2-alt']} onChange={handleChange} name='first-col-2' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="first-col-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['first-col-2-alt']} onChange={handleChange} name='first-col-2-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="first-col-2-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -214,8 +244,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ไหว้และกล่าวทักทายผู้รับบริการอย่างเหมาะสม ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['sec-col-1-alt']} onChange={handleChange} name='sec-col-1' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="sec-col-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['sec-col-1-alt']} onChange={handleChange} name='sec-col-1-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="sec-col-1-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -223,8 +255,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ไหว้และกล่าวทักทายพนักงานภายนอกแผนกอย่างสม่ำเสมอ ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['sec-col-2-alt']} onChange={handleChange} name='sec-col-2' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="sec-col-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['sec-col-2-alt']} onChange={handleChange} name='sec-col-2-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="sec-col-2-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -244,8 +278,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ใส่ใจสอบถามผู้รับบริการอย่างสม่ำเสมอ ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['th-col-1-alt']} onChange={handleChange} name='th-col-1' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="th-col-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['th-col-1-alt']} onChange={handleChange} name='th-col-1-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="th-col-1-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -253,8 +289,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ใส่ใจสอบถามพนักงานภายนอกแผนกด้วยปิยวาจาอย่างสม่ำเสมอ ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['th-col-2-alt']} onChange={handleChange} name='th-col-2' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="th-col-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['th-col-2-alt']} onChange={handleChange} name='th-col-2-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="th-col-2-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -274,8 +312,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ให้ข้อมูลผู้รับบริการอย่างถูกต้องและเหมาะสม ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['four-col-1-alt']} onChange={handleChange} name='four-col-1' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="four-col-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['four-col-1-alt']} onChange={handleChange} name='four-col-1-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="four-col-1-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -283,8 +323,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >ให้ข้อมูลพนักงานภายนอกแผนกได้อย่างถูกต้องและเหมาะสม ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['four-col-2-alt']} onChange={handleChange} name='four-col-2' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="four-col-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['four-col-2-alt']} onChange={handleChange} name='four-col-2-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="four-col-2-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -304,8 +346,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >มีความกระตือรือร้นและธุระใช่กับผู้รับบริการอย่างถูกต้องและเหมาะสม ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['five-col-1-alt']} onChange={handleChange} name='five-col-1' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="five-col-1" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['five-col-1-alt']} onChange={handleChange} name='five-col-1-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="five-col-1-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -313,8 +357,10 @@ const Rate = ({id}:any) => {
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >มีความกระตือรือร้นและธุระใช่กับผู้รับบริการอย่างถูกต้องและเหมาะสม ( 1 คะแนน )</th>
                                                 <td className="px-6 py-4 whitespace-nowrap space-x-2">
                                                     <div className="flex items-center mb-4">
-                                                        <input onChange={handleChange} id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                        <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={!stateScore['five-col-2-alt']} onChange={handleChange} name='five-col-2' id="default-checkbox" type="checkbox" value={1} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="five-col-2" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">1 คะแนน</label>
+                                                        <input checked={stateScore['five-col-2-alt']} onChange={handleChange} name='five-col-2-alt' id="default-checkbox" type="checkbox" value={1} className="ml-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                        <label htmlFor="five-col-2-alt" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">0 คะแนน</label>
                                                     </div>
                                                 </td>
                                             </tr>
