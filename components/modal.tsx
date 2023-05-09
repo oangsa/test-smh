@@ -29,7 +29,7 @@ const StatModal = ({id, key}: any) => {
 
     const onClose = () => {
         try{
-            const $modalElement: HTMLElement = document.querySelector('#defaultModal');
+            const $modalElement:any = document.querySelector('#defaultModal');
             const modal: ModalInterface = new Modal($modalElement, modalOptions);
 
             setTimeout(() => router.reload(), 500)
@@ -41,7 +41,7 @@ const StatModal = ({id, key}: any) => {
     
     const onOpen = () => {
         try{
-            const $modalElement: HTMLElement = document.querySelector('#defaultModal');
+            const $modalElement:any = document.querySelector('#defaultModal');
             const modal: ModalInterface = new Modal($modalElement, modalOptions);
 
             modal.show()

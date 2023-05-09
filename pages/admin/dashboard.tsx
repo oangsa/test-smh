@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
 import StatModal from "@/components/modal"
 // import { useExcelDownloder } from "react-xls"
+interface downloadData {
+    Data: any[]
+}
 
 const AdminDashboard = () => {
 
@@ -19,7 +22,7 @@ const AdminDashboard = () => {
     };
     const [data, setData] = useState([])
     const [showStudent, setShowStudent] = useState(true)
-    const [downloadData, setDownloadData] = useState({Data:[]})
+    const [downloadData, setDownloadData] = useState<downloadData>({Data:[]})
     // const { ExcelDownloder, Type } = useExcelDownloder();
 
     
@@ -42,7 +45,7 @@ const AdminDashboard = () => {
 
     const OnClick = () => {
         data.map((element:any) => {
-            const struct: any = {"แผนก": element.department, "คะแนนรวม": element.score}
+            const struct:{แผนก:any, คะแนนรวม:any} = {"แผนก": element.department, "คะแนนรวม": element.score}
             downloadData.Data.push(struct)
         })
 
