@@ -108,7 +108,7 @@ const StatModal = ({id, key}: any) => {
                         </div>
                         <div className="grid sm:grid-col-2 p-6 space-y-2">
                             { department.map((element) => (
-                                <div className='font-bold text-lg text-black' id={element}>{element}</div>
+                                <div key={element} className='font-bold text-lg text-black' id={element}>{element}</div>
                             )) }
                         </div>
                     </div>

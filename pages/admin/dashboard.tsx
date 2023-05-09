@@ -41,7 +41,7 @@ const AdminDashboard = () => {
     }, [data, downloadData.Data])
 
     const OnClick = () => {
-        data.map((element:string) => {
+        data.map((element:any) => {
             const struct: any = {"แผนก": element.department, "คะแนนรวม": element.score}
             downloadData.Data.push(struct)
         })
@@ -78,12 +78,12 @@ const AdminDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data.map((element) => 
+                                    {data.map((element:any) => 
                                     <tr key={element._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >{element.department}</th>
                                         <td className="px-7 py-4" >{element.score} คะแนน</td>
                                         <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                                            <StatModal id={element.department}></StatModal>
+                                            <StatModal key={element._id} id={element.department}></StatModal>
                                         </td>
                                     </tr>
                                     )}
@@ -99,4 +99,4 @@ const AdminDashboard = () => {
     )
 }
 
-export default adminDashboard
+export default AdminDashboard
